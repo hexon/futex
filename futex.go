@@ -16,6 +16,8 @@ const (
 	opFUTEX_WAKE            Flags = 1
 	opFUTEX_REQUEUE         Flags = 3
 	opFUTEX_CMP_REQUEUE     Flags = 4
+	opFUTEX_WAIT_BITSET     Flags = 9
+	opFUTEX_WAKE_BITSET     Flags = 10
 
 	FUTEX_PRIVATE_FLAG   Flags = 128
 	FUTEX_CLOCK_REALTIME Flags = 256
