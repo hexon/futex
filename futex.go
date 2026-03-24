@@ -120,8 +120,8 @@ func CmpRequeue(uaddr *uint32, flags Flags, numWake, maxRequeue uint32, uaddr2 *
 	return uint32(r1), errnoToError(err)
 }
 
-// Requeue performs the same task as FUTEX_CMP_REQUEUE (see above), except that
-// no check is made using the value in cmpVal.
+// Requeue performs the same task as [CmpRequeue] (see above), except that no
+// check is made using the value in cmpVal.
 func Requeue(uaddr *uint32, flags Flags, numWake, maxRequeue uint32, uaddr2 *uint32) (uint32, error) {
 	uaddr = escape(uaddr)
 	uaddr2 = escape(uaddr2)
