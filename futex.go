@@ -6,6 +6,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/hexon/futex/wakeop"
 	"golang.org/x/sys/unix"
 )
 
@@ -16,6 +17,7 @@ const (
 	opFUTEX_WAKE            Flags = 1
 	opFUTEX_REQUEUE         Flags = 3
 	opFUTEX_CMP_REQUEUE     Flags = 4
+	opFUTEX_WAKE_OP         Flags = 5
 	opFUTEX_WAIT_BITSET     Flags = 9
 	opFUTEX_WAKE_BITSET     Flags = 10
 
@@ -158,6 +160,16 @@ func WakeBitset(uaddr *uint32, flags Flags, numWake, bitset uint32) (uint32, err
 	futex_op := flags | opFUTEX_WAKE_BITSET
 	r1, _, err := unix.Syscall6(unix.SYS_FUTEX, uintptr(unsafe.Pointer(uaddr)), uintptr(futex_op), uintptr(numWake), 0, 0, uintptr(bitset))
 	runtime.KeepAlive(uaddr)
+	return uint32(r1), errnoToError(err)
+}
+
+func WakeOp(uaddr *uint32, flags Flags, numWake1, numWake2 uint32, uaddr2 *uint32, op wakeop.Op) (uint32, error) {
+	uaddr = escape(uaddr)
+	uaddr2 = escape(uaddr2)
+	futex_op := flags | opFUTEX_WAKE_OP
+	r1, _, err := unix.Syscall6(unix.SYS_FUTEX, uintptr(unsafe.Pointer(uaddr)), uintptr(futex_op), uintptr(numWake1), uintptr(numWake2), uintptr(unsafe.Pointer(uaddr2)), uintptr(op))
+	runtime.KeepAlive(uaddr)
+	runtime.KeepAlive(uaddr2)
 	return uint32(r1), errnoToError(err)
 }
 
